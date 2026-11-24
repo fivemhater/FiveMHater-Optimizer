@@ -34,6 +34,7 @@ public sealed class GpuDisplayModule : IOptimizationModule
         reg.SetDword(Hive.HKCU, @"System\GameConfigStore", "GameDVR_FSEBehaviorMode", 2);
         reg.SetDword(Hive.HKCU, @"System\GameConfigStore", "GameDVR_HonorUserFSEBehaviorMode", 1);
         reg.SetDword(Hive.HKLM, @"SOFTWARE\Policies\Microsoft\Windows\GameDVR", "AllowGameDVR", 0);
+        reg.SetDword(Hive.HKCU, @"Software\Microsoft\GameBar", "UseNexusForGameBarEnabled", 0);
         ctx.SubProgress?.Invoke(0.25);
 
         if (s.OsBuild >= 19041)
@@ -104,6 +105,8 @@ public sealed class GpuDisplayModule : IOptimizationModule
             reg.SetString(Hive.HKCU, @"Control Panel\Desktop\WindowMetrics", "MinAnimate", "0");
             reg.SetDword(Hive.HKCU, @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "TaskbarAnimations", 0);
             reg.SetDword(Hive.HKCU, @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "ListviewAlphaSelect", 0);
+            reg.SetDword(Hive.HKCU, @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "ListviewShadow", 0);
+            reg.SetString(Hive.HKCU, @"Control Panel\Desktop", "DragFullWindows", "0");
             reg.SetDword(Hive.HKCU, @"Software\Microsoft\Windows\DWM", "EnableAeroPeek", 0);
             NativeMethods.BroadcastSettingChange("WindowMetrics");
             NativeMethods.BroadcastSettingChange("ImmersiveColorSet");

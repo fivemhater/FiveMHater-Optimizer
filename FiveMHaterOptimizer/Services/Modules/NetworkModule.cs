@@ -66,7 +66,8 @@ public sealed class NetworkModule : IOptimizationModule
             ("timestamps", "disabled"),
             ("rss", "enabled"),
             ("initialRto", "2000"),
-            ("heuristics", "disabled")
+            ("heuristics", "disabled"),
+            ("nonsackrttresiliency", "disabled")
         };
         foreach (var (key, value) in desired)
         {

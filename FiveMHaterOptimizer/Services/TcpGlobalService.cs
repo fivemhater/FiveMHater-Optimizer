@@ -18,7 +18,8 @@ public static class TcpGlobalService
         ["timestamps"] = "default",
         ["rss"] = "enabled",
         ["initialRto"] = "1000",
-        ["heuristics"] = "default"
+        ["heuristics"] = "default",
+        ["nonsackrttresiliency"] = "disabled"
     };
 
     private static readonly Dictionary<string, HashSet<string>> AllowedValues = new(StringComparer.OrdinalIgnoreCase)
@@ -28,7 +29,8 @@ public static class TcpGlobalService
         ["rsc"] = new(StringComparer.OrdinalIgnoreCase) { "enabled", "disabled" },
         ["timestamps"] = new(StringComparer.OrdinalIgnoreCase) { "enabled", "disabled", "allowed", "default" },
         ["rss"] = new(StringComparer.OrdinalIgnoreCase) { "enabled", "disabled" },
-        ["heuristics"] = new(StringComparer.OrdinalIgnoreCase) { "enabled", "disabled", "default" }
+        ["heuristics"] = new(StringComparer.OrdinalIgnoreCase) { "enabled", "disabled", "default" },
+        ["nonsackrttresiliency"] = new(StringComparer.OrdinalIgnoreCase) { "enabled", "disabled" }
     };
 
     public static bool IsValid(string key, string value)
@@ -51,15 +53,16 @@ public static class TcpGlobalService
             TryLabel(g.Output, @"RFC 1323 Timestamps\s*:\s*(\S+)", "timestamps", result);
             TryLabel(g.Output, @"Initial RTO\s*:\s*(\d+)", "initialRto", result);
             TryLabel(g.Output, @"Receive Segment Coalescing State\s*:\s*(\S+)", "rsc", result);
+            TryLabel(g.Output, @"Non Sack Rtt Resiliency\s*:\s*(\S+)", "nonsackrttresiliency", result);
         }
         var h = ProcessRunner.Run("netsh.exe", "int tcp show heuristics", null, 30_000, false, false);
         if (h.Success) TryLabel(h.Output, @"Window Scaling heuristics\s*:\s*(\S+)", "heuristics", result);
 
         // 2) WMI (dil bağımsız) — netsh etiketleri yerelleştirilmişse
-        if (result.Count < 7)
+        if (result.Count < WindowsDefaults.Count)
         {
             var tcp = WmiUtil.Query(@"root\StandardCimv2", "SELECT * FROM MSFT_NetTCPSetting WHERE SettingName = 'Internet'",
-                "AutoTuningLevelLocal", "EcnCapability", "Timestamps", "InitialRtoMs", "ScalingHeuristics");
+                "AutoTuningLevelLocal", "EcnCapability", "Timestamps", "InitialRtoMs", "ScalingHeuristics", "NonSackRttResiliency");
             if (tcp.Count > 0)
             {
                 var row = tcp[0];
@@ -77,6 +80,8 @@ public static class TcpGlobalService
                     result["timestamps"] = WmiUtil.Num(row, "Timestamps") switch { 0 => "disabled", 1 => "enabled", 2 => "allowed", _ => "default" };
                 if (!result.ContainsKey("initialRto") && row["InitialRtoMs"] != null && WmiUtil.Num(row, "InitialRtoMs") >= 300)
                     result["initialRto"] = WmiUtil.Num(row, "InitialRtoMs").ToString();
+                if (!result.ContainsKey("nonsackrttresiliency") && row.TryGetValue("NonSackRttResiliency", out var ns) && ns != null)
+                    result["nonsackrttresiliency"] = WmiUtil.Num(row, "NonSackRttResiliency") == 1 ? "enabled" : "disabled";
                 if (!result.ContainsKey("heuristics") && row["ScalingHeuristics"] != null)
                     result["heuristics"] = WmiUtil.Num(row, "ScalingHeuristics") == 1 ? "enabled" : "disabled";
             }

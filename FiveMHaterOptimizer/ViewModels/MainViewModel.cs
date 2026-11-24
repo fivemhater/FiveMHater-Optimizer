@@ -189,6 +189,19 @@ public sealed class MainViewModel : ObservableObject
     public bool DisableOneDriveStartup { get => _disableOneDrive; set => SetField(ref _disableOneDrive, value); }
     private bool _removeBloatware;
     public bool RemoveBloatware { get => _removeBloatware; set => SetField(ref _removeBloatware, value); }
+    private bool _runDism;
+    public bool RunDismCleanup { get => _runDism; set => SetField(ref _runDism, value); }
+
+    public RelayCommand OpenDiscordCommand { get; } = new RelayCommand(OpenDiscord);
+
+    public const string DiscordUrl = "https://discord.gg/fivemhater";
+
+    /// <summary>Yalnızca kullanıcı tıklayınca varsayılan tarayıcıda açılır; otomatik açılmaz.</summary>
+    private static void OpenDiscord()
+    {
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(DiscordUrl) { UseShellExecute = true }); }
+        catch (Exception ex) { MessageBox.Show("Bağlantı açılamadı: " + ex.Message + "\n" + DiscordUrl, "FiveMHater Optimizer", MessageBoxButton.OK, MessageBoxImage.Information); }
+    }
 
     // ---------- Live screen ----------
     private string _title = "Optimizasyon uygulanıyor";
@@ -295,13 +308,15 @@ public sealed class MainViewModel : ObservableObject
             KeepDiscordSteamStartup = KeepDiscordSteamStartup,
             DisableBluetooth = IsUltra && DisableBluetooth,
             DisableOneDriveStartup = IsUltra && DisableOneDriveStartup,
-            RemoveBloatware = TogglesEnabled && RemoveBloatware
+            RemoveBloatware = TogglesEnabled && RemoveBloatware,
+            RunDismCleanup = TogglesEnabled && RunDismCleanup
         };
 
         string msg = $"\"{options.ProfileDisplayName}\" profili uygulanacak.\n\n" +
                      "• Önce Sistem Geri Yükleme Noktası ve tam JSON yedeği alınır.\n" +
                      "• Tüm değişiklikler \"Tam Geri Al (Restore)\" ile geri alınabilir.\n" +
                      (options.ClearFiveMCache ? "• FiveM açıksa önbellek temizliği için kapatılacak.\n" : "") +
+                     (options.RunDismCleanup ? "• Windows bileşen temizliği (DISM) çalışacak: 5-15 dk sürebilir.\n" : "") +
                      (options.RemoveBloatware ? "• DİKKAT: Hazır gelen gereksiz uygulamalar kaldırılacak. Bu adım GERİ ALINAMAZ (Microsoft Store'dan yeniden yüklenebilir).\n" : "") +
                      (options.Profile == OptimizationProfile.Ultra
                          ? "• Ultra: koruma listesi dışındaki başlangıç uygulamaları ve ek servisler kapatılır (hepsi geri alınabilir).\n" +

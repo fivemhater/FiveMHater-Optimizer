@@ -121,6 +121,12 @@ public sealed class ServiceProcessModule : IOptimizationModule
             reg.SetDword(Hive.HKLM, @"SOFTWARE\Policies\Microsoft\Windows\System", "PublishUserActivities", 0);
             reg.SetDword(Hive.HKLM, @"SOFTWARE\Policies\Microsoft\Windows\System", "UploadUserActivities", 0);
             reg.SetString(Hive.HKCU, @"Control Panel\Desktop", "MenuShowDelay", "0");
+            foreach (string v in new[]
+                     {
+                         "RotatingLockScreenOverlayEnabled", "SubscribedContent-338387Enabled", "SubscribedContent-338388Enabled",
+                         "SubscribedContent-338389Enabled", "SubscribedContent-353698Enabled", "SilentInstalledAppsEnabled", "SystemPaneSuggestionsEnabled"
+                     })
+                reg.SetDword(Hive.HKCU, @"Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager", v, 0);
         }
 
         // ---- Microsoft Edge arka planı ----

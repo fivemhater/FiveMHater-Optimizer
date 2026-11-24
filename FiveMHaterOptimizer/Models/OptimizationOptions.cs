@@ -26,6 +26,9 @@ public sealed class OptimizationOptions
     /// <summary>Opsiyonel, varsayılan KAPALI: hazır gelen gereksiz uygulamaları kaldır (geri alınamaz).</summary>
     public bool RemoveBloatware { get; set; }
 
+    /// <summary>Opsiyonel, varsayılan KAPALI: DISM /StartComponentCleanup (ResetBase YOK).</summary>
+    public bool RunDismCleanup { get; set; }
+
     public string ProfileDisplayName => Profile switch
     {
         OptimizationProfile.Ultra => "Ultra / Full+Full",

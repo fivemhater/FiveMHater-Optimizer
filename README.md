@@ -4,6 +4,9 @@ Windows 10/11 için FiveM / GTA V odaklı performans optimizasyon aracı (C# .NE
 
 İndirme: [Releases](../../releases/latest)
 
+## v2.3.0
+Ek güvenli ayarlar (TRIM, MMCSS, netsh, gizlilik, temizlik), opsiyonel DISM bileşen temizliği, arayüz taşma düzeltmeleri ve discord.gg/fivemhater bağlantısı.
+
 ## v2.2.0
 Gizlilik ayarları, uyku/disk/hazırda bekletme, INetCache + SSD TRIM, ek Ultra servis/görevleri ve opsiyonel hazır uygulama kaldırma (varsayılan kapalı).
 

@@ -1,4 +1,4 @@
-# FiveMHater Optimizer v2.2 — Derleme, İkon ve Dijital İmzalama Rehberi
+# FiveMHater Optimizer v2.3 — Derleme, İkon ve Dijital İmzalama Rehberi
 
 Teknoloji: **C# .NET 8 · WPF · tek dosya win-x64 .exe** (packer / obfuscator / UPX / sıkıştırma **YOK**).
 Yönetici yetkisi `app.manifest` içindeki `requireAdministrator` ile istenir.
@@ -17,7 +17,7 @@ FiveMHaterOptimizer-source/
 │   ├── publish.ps1             # Windows'ta tek dosya derleme
 │   └── publish.sh              # Linux/macOS'ta çapraz derleme
 └── FiveMHaterOptimizer/
-    ├── FiveMHaterOptimizer.csproj   # AssemblyInfo: Product/Company/Copyright/Version 2.2.0.0/ApplicationIcon
+    ├── FiveMHaterOptimizer.csproj   # AssemblyInfo: Product/Company/Copyright/Version 2.3.0.0/ApplicationIcon
     ├── app.manifest                 # requireAdministrator, Win10/11 GUID, PerMonitorV2 DPI, longPathAware
     ├── App.xaml / App.xaml.cs       # Tema, stiller, global hata yakalama
     ├── Assets/
@@ -49,6 +49,7 @@ FiveMHaterOptimizer-source/
     │       ├── GameSettingsModule.cs     # Modül 7  Oyun ayarları (exe + settings.xml)
     │       ├── FiveMCacheModule.cs       # Modül 7  FiveM önbelleği
     │       ├── RamDiskModule.cs          # Modül 8  RAM & Disk
+    │       ├── DismCleanupModule.cs      # Modül 8b Opsiyonel: DISM /StartComponentCleanup
     │       └── VerificationModule.cs     # Modül 9  Doğrulama ve sonuç
     ├── ViewModels/  MainViewModel.cs  ObservableObject.cs  RelayCommand.cs
     └── Views/       MainWindow.xaml(.cs)  LogoView.xaml(.cs)   # Vektörel yedek logo dahil
@@ -256,3 +257,21 @@ Defender veya SmartScreen exe'yi yanlışlıkla işaretlerse:
 - **Opsiyonel (varsayılan KAPALI):** "Hazır gelen gereksiz uygulamaları kaldır (geri alınamaz)". Yalnızca mevcut kullanıcı; provisioned
   paketlere dokunulmaz; Xbox/Store/Kamera/Hesap Makinesi/Fotoğraflar vb. korunur. Kaldırılanlar `RemovedAppx` altında listelenir,
   Tam Geri Al yalnızca bunları loglar (Microsoft Store'dan yeniden yüklenebilir).
+
+## v2.3 — Ek güvenli ayarlar, arayüz düzeltmeleri, Discord bağlantısı
+
+- **Disk:** `fsutil behavior set DisableDeleteNotify 0` (TRIM bildirimleri açık). Önce `FileSystem\DisableDeleteNotification` yedeklenir; Geri Al orijinali yazar.
+- **MMCSS Tasks\Games:** `Latency Sensitive="True"`, `Affinity=0` (mevcut `Background Only="False"`, `Clock Rate=10000` korunur). Yedekli.
+- **Görsel (Extreme + Ultra):** `DragFullWindows="0"`, `ListviewShadow=0`.
+- **Game Bar:** `UseNexusForGameBarEnabled=0` (GameDVR kapatma adımında).
+- **netsh:** `nonsackrttresiliency=disabled` (orijinal değer `netsh int tcp show global` / WMI ile okunup yedeklenir, Geri Al'da uygulanır).
+- **ContentDeliveryManager (Extreme + Ultra, gizlilik adımı):** kilit ekranı önerileri, abonelikli içerik 338387/338388/338389/353698,
+  sessiz uygulama yükleme ve Başlat önerileri = 0.
+- **Temizlik:** `%LOCALAPPDATA%\CrashDumps` ve `%WINDIR%\SoftwareDistribution\Download` (1 günden eski, kilitli dosyalar atlanır, servis durdurulmaz).
+- **Opsiyonel (varsayılan KAPALI):** "Windows bileşen temizliği (DISM, 5-15 dk sürebilir)" → `Dism.exe /Online /Cleanup-Image /StartComponentCleanup`
+  (/ResetBase YOK), pencere açılmaz, ilerleme %10 adımlarla loglanır, 30 dk sınır (DISM zorla sonlandırılmaz).
+- **Arayüz:** profil kartlarında "ÖNERİLEN" rozeti başlığın altında ayrı satırda; başlıklar 13.5 pt ve satır kaydırmalı; seçim halkası
+  ile içerik arasında 10 px boşluk. Anahtar metinleri taşarsa satır kaydırır; alt bilgi satır kaydırır; sonuç ekranındaki 6 düğme dar
+  dolgu ile tek satıra sığar; rozet değerleri taşarsa "…" ile kısalır.
+- **Discord:** başlık çubuğunda `discord.gg/fivemhater` bağlantısı. Yalnızca tıklanınca varsayılan tarayıcıda açılır
+  (`Process.Start` + `UseShellExecute=true`); uygulama açılışında hiçbir şey otomatik açılmaz.

@@ -26,6 +26,7 @@ public sealed class OptimizerEngine
         new GameSettingsModule(),
         new FiveMCacheModule(),
         new RamDiskModule(),
+        new DismCleanupModule(),
         new VerificationModule()
     };
 

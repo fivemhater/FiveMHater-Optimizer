@@ -94,6 +94,17 @@ public sealed class RamDiskModule : IOptimizationModule
         log.Info("NTFS hızlandırma (fsutil):");
         reg.Snapshot(Hive.HKLM, FileSystemKey, "NtfsDisableLastAccessUpdate");
         reg.Snapshot(Hive.HKLM, FileSystemKey, "NtfsDisable8dot3NameCreation");
+        reg.Snapshot(Hive.HKLM, FileSystemKey, "DisableDeleteNotification");
+        var dq = ProcessRunner.Run("fsutil.exe", "behavior query DisableDeleteNotify", log, 30_000);
+        long? ddn = RegistryUtil.GetNumber(Hive.HKLM, FileSystemKey, "DisableDeleteNotification");
+        log.Detail($"DisableDeleteNotify mevcut değer (kayıt defteri): {(ddn?.ToString() ?? "tanımsız")} — yedeklendi.");
+        if (ProcessRunner.Run("fsutil.exe", "behavior set DisableDeleteNotify 0", log, 30_000).Success)
+        {
+            log.Ok("TRIM bildirimleri açık (DisableDeleteNotify = 0) — SSD performansı korunur.");
+            ctx.Verify.Add("fsutil:disabledeletenotify", "NTFS DisableDeleteNotify = 0 (TRIM açık)",
+                () => (RegistryUtil.GetNumber(Hive.HKLM, FileSystemKey, "DisableDeleteNotification") ?? 0) == 0);
+        }
+        else log.Warn("DisableDeleteNotify ayarlanamadı.");
         if (ProcessRunner.Run("fsutil.exe", "behavior set disablelastaccess 1", log, 30_000).Success)
         {
             log.Ok("Son erişim zamanı güncellemesi kapalı.");
@@ -125,7 +136,9 @@ public sealed class RamDiskModule : IOptimizationModule
             ("AMD DxcCache", Path.Combine(local, "AMD", "DxcCache"), null, null),
             ("AMD GLCache", Path.Combine(local, "AMD", "GLCache"), null, null),
             ("AMD VkCache", Path.Combine(local, "AMD", "VkCache"), null, null),
-            ("Internet önbelleği (INetCache)", Path.Combine(local, "Microsoft", "Windows", "INetCache"), null, null)
+            ("Internet önbelleği (INetCache)", Path.Combine(local, "Microsoft", "Windows", "INetCache"), null, null),
+            ("Çökme dökümleri (CrashDumps, 1 günden eski)", Path.Combine(local, "CrashDumps"), TimeSpan.FromDays(1), null),
+            ("Windows Update indirme önbelleği (SoftwareDistribution\\Download, 1 günden eski)", Path.Combine(win, "SoftwareDistribution", "Download"), TimeSpan.FromDays(1), null)
         };
 
         double total = 0;

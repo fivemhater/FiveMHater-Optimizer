@@ -218,6 +218,8 @@ public sealed class PowerCpuModule : IOptimizationModule
         reg.SetString(Hive.HKLM, GamesTaskKey, "SFIO Priority", "High");
         reg.SetString(Hive.HKLM, GamesTaskKey, "Background Only", "False");
         reg.SetDword(Hive.HKLM, GamesTaskKey, "Clock Rate", 10000);
+        reg.SetString(Hive.HKLM, GamesTaskKey, "Latency Sensitive", "True");
+        reg.SetDword(Hive.HKLM, GamesTaskKey, "Affinity", 0);
         ctx.SubProgress?.Invoke(0.7);
 
         // ---- PCIe MSI ----

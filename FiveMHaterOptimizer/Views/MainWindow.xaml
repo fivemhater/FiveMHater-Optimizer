@@ -27,9 +27,21 @@
                         </Ellipse.Effect>
                     </Ellipse>
                     <TextBlock Text="FiveMHater Optimizer" Margin="9,0,0,0" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MutedBrush}" />
-                    <TextBlock Text="v2.2" Margin="6,0,0,0" FontSize="12" Foreground="{StaticResource DimBrush}" />
+                    <TextBlock Text="v2.3" Margin="6,0,0,0" FontSize="12" Foreground="{StaticResource DimBrush}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
+                    <Button Style="{StaticResource LinkButton}" Command="{Binding OpenDiscordCommand}" Margin="0,0,10,0"
+                            ToolTip="Discord sunucumuz — tıklayınca tarayıcıda açılır">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="15" Height="11" CornerRadius="4" Background="#5865F2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Ellipse Width="3" Height="3.4" Fill="#09090B" />
+                                    <Ellipse Width="3" Height="3.4" Fill="#09090B" Margin="3,0,0,0" />
+                                </StackPanel>
+                            </Border>
+                            <TextBlock Text="discord.gg/fivemhater" Margin="7,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                     <Button Style="{StaticResource TitleBarButton}" Click="Minimize_Click" ToolTip="Küçült">
                         <Path Data="M 0,0 H 10" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.2" Width="10" Height="1" />
                     </Button>
@@ -103,33 +115,31 @@
                 <UniformGrid Grid.Row="2" Columns="4" Margin="-5,0">
                     <RadioButton Style="{StaticResource ProfileCard}" IsChecked="{Binding IsUltra, Mode=TwoWay}">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Ultra / Full+Full" FontSize="14" FontWeight="SemiBold" />
-                                <Border Background="#2A0D11" BorderBrush="#5B1A20" BorderThickness="1" CornerRadius="5" Padding="6,1" Margin="8,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="ÖNERİLEN" FontSize="9" FontWeight="Bold" Foreground="#FCA5A5" />
-                                </Border>
-                            </StackPanel>
+                            <TextBlock Text="Ultra / Full+Full" FontSize="13.5" FontWeight="SemiBold" TextWrapping="Wrap" />
+                            <Border Background="#2A0D11" BorderBrush="#5B1A20" BorderThickness="1" CornerRadius="5" Padding="6,1" Margin="0,5,0,0" HorizontalAlignment="Left">
+                                <TextBlock Text="ÖNERİLEN" FontSize="9" FontWeight="Bold" Foreground="#FCA5A5" />
+                            </Border>
                             <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource MutedBrush}" Margin="0,7,0,0"
                                        Text="Extreme + başlangıç uygulamaları, derin servis/görev azaltma, Widgets/Copilot/Teams kapatma. En düşük işlem sayısı." />
                         </StackPanel>
                     </RadioButton>
                     <RadioButton Style="{StaticResource ProfileCard}" IsChecked="{Binding IsExtreme, Mode=TwoWay}">
                         <StackPanel>
-                            <TextBlock Text="Extreme / Competitive" FontSize="14" FontWeight="SemiBold" />
+                            <TextBlock Text="Extreme / Competitive" FontSize="13.5" FontWeight="SemiBold" TextWrapping="Wrap" />
                             <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource MutedBrush}" Margin="0,7,0,0"
                                        Text="Arka plan işlemlerini azaltır; tüm CPU / GPU / RAM / Input / Ağ / FiveM ince ayarlarını uygular." />
                         </StackPanel>
                     </RadioButton>
                     <RadioButton Style="{StaticResource ProfileCard}" IsChecked="{Binding IsBalanced, Mode=TwoWay}">
                         <StackPanel>
-                            <TextBlock Text="Balanced (Günlük + Oyun)" FontSize="14" FontWeight="SemiBold" />
+                            <TextBlock Text="Balanced (Günlük + Oyun)" FontSize="13.5" FontWeight="SemiBold" TextWrapping="Wrap" />
                             <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource MutedBrush}" Margin="0,7,0,0"
                                        Text="Yazıcı / Arama / Tablet servislerini korur; güvenli performans + ağ optimizasyonu." />
                         </StackPanel>
                     </RadioButton>
                     <RadioButton Style="{StaticResource ProfileCard}" IsChecked="{Binding IsNetworkOnly, Mode=TwoWay}">
                         <StackPanel>
-                            <TextBlock Text="Sadece Ağ &amp; Ping" FontSize="14" FontWeight="SemiBold" />
+                            <TextBlock Text="Sadece Ağ &amp; Ping" FontSize="13.5" FontWeight="SemiBold" TextWrapping="Wrap" />
                             <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource MutedBrush}" Margin="0,7,0,0"
                                        Text="Sisteme dokunmadan yalnızca TCP / NIC / DNS / QoS optimizasyonu." />
                         </StackPanel>
@@ -148,10 +158,13 @@
                         <CheckBox Style="{StaticResource SwitchToggle}" IsChecked="{Binding DisableOneDriveStartup, Mode=TwoWay}" Content="OneDrive başlangıçta açılmasın" />
                         <CheckBox Style="{StaticResource SwitchToggle}" IsChecked="{Binding DisableBluetooth, Mode=TwoWay}" Content="Bluetooth kullanmıyorum (kapat)" />
                     </UniformGrid>
-                    <UniformGrid Columns="1" Margin="-5,8,-5,0" IsEnabled="{Binding TogglesEnabled}">
+                    <UniformGrid Columns="2" Margin="-5,8,-5,0" IsEnabled="{Binding TogglesEnabled}">
                         <CheckBox Style="{StaticResource SwitchToggle}" IsChecked="{Binding RemoveBloatware, Mode=TwoWay}"
                                   Content="Hazır gelen gereksiz uygulamaları kaldır (geri alınamaz)"
                                   ToolTip="Yalnızca mevcut kullanıcı için: Bing Haber/Hava, Solitaire, Candy Crush, TikTok, Spotify, Teams (kişisel), Clipchamp vb. Xbox, Store, Kamera, Hesap Makinesi, Fotoğraflar korunur. Microsoft Store'dan yeniden yüklenebilir." />
+                        <CheckBox Style="{StaticResource SwitchToggle}" IsChecked="{Binding RunDismCleanup, Mode=TwoWay}"
+                                  Content="Windows bileşen temizliği (DISM, 5-15 dk sürebilir)"
+                                  ToolTip="Dism.exe /Online /Cleanup-Image /StartComponentCleanup — eski bileşen sürümlerini temizler. /ResetBase kullanılmaz; güncellemeler kaldırılabilir kalır." />
                     </UniformGrid>
                 </StackPanel>
 
@@ -168,7 +181,7 @@
                             Visibility="{Binding HasBackup, Converter={StaticResource BoolToVis}}" />
                 </StackPanel>
 
-                <TextBlock Grid.Row="5" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource DimBrush}" TextAlignment="Center"
+                <TextBlock Grid.Row="5" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource DimBrush}" TextAlignment="Center" TextWrapping="Wrap"
                            Text="Uygulamadan önce Sistem Geri Yükleme Noktası ve %ProgramData%\FiveMHater\backup.json tam yedeği alınır. Her değişiklik tek tıkla geri alınabilir.&#x0a;Sonuçlar en doğru, yeniden başlattıktan 2-3 dakika sonra ölçülür (açılışta Windows geçici süreçler çalıştırır)." />
             </Grid>
 
@@ -216,28 +229,28 @@
                     <Border Style="{StaticResource BadgeBorder}">
                         <StackPanel>
                             <TextBlock Text="İŞLEM SAYISI" Style="{StaticResource CardLabel}" />
-                            <TextBlock Text="{Binding BadgeProcess}" FontSize="16" FontWeight="SemiBold" Margin="0,3,0,0" />
+                            <TextBlock Text="{Binding BadgeProcess}" FontSize="16" FontWeight="SemiBold" Margin="0,3,0,0" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="Önce → Sonra" Style="{StaticResource CardDetail}" />
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource BadgeBorder}">
                         <StackPanel>
                             <TextBlock Text="BOŞ RAM" Style="{StaticResource CardLabel}" />
-                            <TextBlock Text="{Binding BadgeRam}" FontSize="16" FontWeight="SemiBold" Margin="0,3,0,0" />
+                            <TextBlock Text="{Binding BadgeRam}" FontSize="16" FontWeight="SemiBold" Margin="0,3,0,0" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="Önce → Sonra" Style="{StaticResource CardDetail}" />
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource BadgeBorder}">
                         <StackPanel>
                             <TextBlock Text="PING &amp; JITTER" Style="{StaticResource CardLabel}" />
-                            <TextBlock Text="{Binding BadgePing}" FontSize="16" FontWeight="SemiBold" Margin="0,3,0,0" />
+                            <TextBlock Text="{Binding BadgePing}" FontSize="16" FontWeight="SemiBold" Margin="0,3,0,0" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{Binding BadgeJitter}" Style="{StaticResource CardDetail}" />
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource BadgeBorder}">
                         <StackPanel>
                             <TextBlock Text="TEMİZLENEN ALAN" Style="{StaticResource CardLabel}" />
-                            <TextBlock Text="{Binding BadgeCleaned}" FontSize="16" FontWeight="SemiBold" Margin="0,3,0,0" />
+                            <TextBlock Text="{Binding BadgeCleaned}" FontSize="16" FontWeight="SemiBold" Margin="0,3,0,0" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{Binding BadgeVerify}" Style="{StaticResource CardDetail}" Foreground="#86EFAC" />
                         </StackPanel>
                     </Border>
@@ -251,13 +264,13 @@
                 <Grid Grid.Row="5" Margin="0,12,0,0" Visibility="{Binding IsCompleted, Converter={StaticResource BoolToVis}}">
                     <Button Style="{StaticResource SecondaryButton}" Command="{Binding BackCommand}" HorizontalAlignment="Left" Content="← Ana ekran" Padding="14,0" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Style="{StaticResource DangerButton}" Command="{Binding RestoreCommand}" Content="Tam Geri Al (Restore)" Margin="0,0,8,0"
+                        <Button Style="{StaticResource DangerButton}" Command="{Binding RestoreCommand}" Content="Tam Geri Al (Restore)" Margin="0,0,8,0" Padding="14,0"
                                 Visibility="{Binding HasBackup, Converter={StaticResource BoolToVis}}" />
-                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding ExportLogCommand}" Content="Logu Dışa Aktar" Margin="0,0,8,0" />
-                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding OpenLogFolderCommand}" Content="Log Klasörü" Margin="0,0,8,0" />
-                        <Button Style="{StaticResource PrimaryButton}" Command="{Binding RebootCommand}" Height="40" Padding="18,0" Margin="0,0,8,0"
+                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding ExportLogCommand}" Content="Logu Dışa Aktar" Margin="0,0,8,0" Padding="14,0" />
+                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding OpenLogFolderCommand}" Content="Log Klasörü" Margin="0,0,8,0" Padding="14,0" />
+                        <Button Style="{StaticResource PrimaryButton}" Command="{Binding RebootCommand}" Height="40" Padding="14,0" Margin="0,0,8,0"
                                 Content="Yeniden Başlat (Önerilir)" Visibility="{Binding RebootRecommended, Converter={StaticResource BoolToVis}}" />
-                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding CloseCommand}" Content="Kapat" />
+                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding CloseCommand}" Content="Kapat" Padding="14,0" />
                     </StackPanel>
                 </Grid>
             </Grid>

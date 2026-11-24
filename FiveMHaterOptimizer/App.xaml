@@ -186,7 +186,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <ContentPresenter />
-                                    <Grid Grid.Column="1" Width="18" Height="18" VerticalAlignment="Top">
+                                    <Grid Grid.Column="1" Width="18" Height="18" Margin="10,0,0,0" VerticalAlignment="Top">
                                         <Ellipse x:Name="Ring" Stroke="#3F3F4A" StrokeThickness="1.5" />
                                         <Ellipse x:Name="Dot" Width="8" Height="8" Fill="#F4F4F5" Visibility="Collapsed" />
                                     </Grid>
@@ -201,6 +201,29 @@
                                     <Setter TargetName="Bd" Property="Background" Value="#15151B" />
                                     <Setter TargetName="Ring" Property="Stroke" Value="#F4F4F5" />
                                     <Setter TargetName="Dot" Property="Visibility" Value="Visible" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- ===== Discord bağlantısı (yalnızca tıklayınca açılır) ===== -->
+            <Style x:Key="LinkButton" TargetType="Button">
+                <Setter Property="Foreground" Value="{StaticResource DimBrush}" />
+                <Setter Property="FontSize" Value="11.5" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Bd" Background="Transparent" CornerRadius="6" Padding="8,4">
+                                <ContentPresenter VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background" Value="#15151B" />
+                                    <Setter Property="Foreground" Value="#C7CAFF" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -230,7 +253,13 @@
                                             </Ellipse.RenderTransform>
                                         </Ellipse>
                                     </Border>
-                                    <ContentPresenter Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                    <ContentPresenter Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                        <ContentPresenter.Resources>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextWrapping" Value="Wrap" />
+                                            </Style>
+                                        </ContentPresenter.Resources>
+                                    </ContentPresenter>
                                 </Grid>
                             </Border>
                             <ControlTemplate.Triggers>
