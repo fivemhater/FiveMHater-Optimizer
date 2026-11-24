@@ -27,7 +27,11 @@ public sealed class ServiceTweaker
         "CryptSvc", "Winmgmt", "EventLog", "Schedule", "ProfSvc", "LSM", "Power", "PlugPlay", "SamSs", "LanmanWorkstation",
         "Netman", "netprofm", "WlanSvc", "Wcmsvc", "Themes", "UserManager", "StateRepository", "AppXSvc", "ClipSVC",
         "Rockstar Service", "vgc", "vgk", "FACEIT", "BrokerInfrastructure", "SystemEventsBroker", "TimeBrokerSvc",
-        "CoreMessagingRegistrar", "gpsvc", "iphlpsvc", "WinHttpAutoProxySvc", "KeyIso", "VaultSvc", "Audiosrv"
+        "CoreMessagingRegistrar", "gpsvc", "iphlpsvc", "WinHttpAutoProxySvc", "KeyIso", "VaultSvc", "Audiosrv",
+        // Ultra güvenlik ağı: Başlat/Ayarlar/Mağaza/bildirim/klavye girişi/oturum için gerekli
+        "WpnService", "WpnUserService", "TabletInputService", "TextInputManagementService", "UnistoreSvc", "UserDataSvc",
+        "DoSvc", "InstallService", "wlidsvc", "TokenBroker", "camsvc", "NPSMSvc", "RmSvc", "DeviceAssociationService", "DsmSvc",
+        "DispBrokerDesktopSvc", "ShellHWDetection", "SgrmBroker", "LanmanServer", "Appinfo", "AppReadiness", "seclogon"
     };
 
     private static readonly string[] GpuDriverServicePrefixes =

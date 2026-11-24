@@ -77,7 +77,7 @@ public sealed class BackupService
             MachineName = Environment.MachineName,
             UserName = Environment.UserName,
             OsVersion = Environment.OSVersion.VersionString,
-            AppVersion = "2.0.0.0"
+            AppVersion = "2.1.0.0"
         };
         var svc = new BackupService(data, true);
         svc.Save();

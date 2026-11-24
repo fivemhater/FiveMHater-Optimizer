@@ -41,7 +41,9 @@ public sealed class OptimizationContext
     /// <summary>Modül içi alt ilerleme (0..1).</summary>
     public Action<double>? SubProgress { get; set; }
 
-    public bool IsExtreme => Options.Profile == OptimizationProfile.Extreme;
+    /// <summary>Ultra, Extreme'in tamamını içerir; bu yüzden Extreme kontrolleri Ultra'da da true döner.</summary>
+    public bool IsExtreme => Options.Profile is OptimizationProfile.Extreme or OptimizationProfile.Ultra;
+    public bool IsUltra => Options.Profile == OptimizationProfile.Ultra;
     public bool IsBalanced => Options.Profile == OptimizationProfile.Balanced;
     public bool IsNetworkOnly => Options.Profile == OptimizationProfile.NetworkOnly;
 

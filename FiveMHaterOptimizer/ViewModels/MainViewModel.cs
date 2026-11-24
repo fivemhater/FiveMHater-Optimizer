@@ -150,22 +150,24 @@ public sealed class MainViewModel : ObservableObject
     public string ProcessDetail { get => _processDetail; set => SetField(ref _processDetail, value); }
 
     // ---------- Profile & toggles ----------
-    private OptimizationProfile _profile = OptimizationProfile.Extreme;
+    private OptimizationProfile _profile = OptimizationProfile.Ultra;
     public OptimizationProfile SelectedProfile
     {
         get => _profile;
         set
         {
             if (!SetField(ref _profile, value)) return;
+            OnPropertyChanged(nameof(IsUltra));
             OnPropertyChanged(nameof(IsExtreme));
             OnPropertyChanged(nameof(IsBalanced));
             OnPropertyChanged(nameof(IsNetworkOnly));
             OnPropertyChanged(nameof(TogglesEnabled));
             if (value == OptimizationProfile.Balanced) DisablePrinter = false;
-            if (value == OptimizationProfile.Extreme) DisablePrinter = true;
+            if (value is OptimizationProfile.Extreme or OptimizationProfile.Ultra) DisablePrinter = true;
         }
     }
 
+    public bool IsUltra { get => SelectedProfile == OptimizationProfile.Ultra; set { if (value) SelectedProfile = OptimizationProfile.Ultra; } }
     public bool IsExtreme { get => SelectedProfile == OptimizationProfile.Extreme; set { if (value) SelectedProfile = OptimizationProfile.Extreme; } }
     public bool IsBalanced { get => SelectedProfile == OptimizationProfile.Balanced; set { if (value) SelectedProfile = OptimizationProfile.Balanced; } }
     public bool IsNetworkOnly { get => SelectedProfile == OptimizationProfile.NetworkOnly; set { if (value) SelectedProfile = OptimizationProfile.NetworkOnly; } }
@@ -177,6 +179,14 @@ public sealed class MainViewModel : ObservableObject
     public bool ApplyFpsPreset { get => _fpsPreset; set => SetField(ref _fpsPreset, value); }
     private bool _disablePrinter = true;
     public bool DisablePrinter { get => _disablePrinter; set => SetField(ref _disablePrinter, value); }
+
+    // ---- Ultra / Full+Full seçenekleri ----
+    private bool _keepDiscordSteam = true;
+    public bool KeepDiscordSteamStartup { get => _keepDiscordSteam; set => SetField(ref _keepDiscordSteam, value); }
+    private bool _disableBluetooth;
+    public bool DisableBluetooth { get => _disableBluetooth; set => SetField(ref _disableBluetooth, value); }
+    private bool _disableOneDrive = true;
+    public bool DisableOneDriveStartup { get => _disableOneDrive; set => SetField(ref _disableOneDrive, value); }
 
     // ---------- Live screen ----------
     private string _title = "Optimizasyon uygulanıyor";
@@ -279,13 +289,21 @@ public sealed class MainViewModel : ObservableObject
             Profile = SelectedProfile,
             ClearFiveMCache = TogglesEnabled && ClearFiveMCache,
             ApplyFiveMFpsPreset = TogglesEnabled && ApplyFpsPreset,
-            DisablePrinterServices = TogglesEnabled && DisablePrinter
+            DisablePrinterServices = TogglesEnabled && DisablePrinter,
+            KeepDiscordSteamStartup = KeepDiscordSteamStartup,
+            DisableBluetooth = IsUltra && DisableBluetooth,
+            DisableOneDriveStartup = IsUltra && DisableOneDriveStartup
         };
 
         string msg = $"\"{options.ProfileDisplayName}\" profili uygulanacak.\n\n" +
                      "• Önce Sistem Geri Yükleme Noktası ve tam JSON yedeği alınır.\n" +
                      "• Tüm değişiklikler \"Tam Geri Al (Restore)\" ile geri alınabilir.\n" +
                      (options.ClearFiveMCache ? "• FiveM açıksa önbellek temizliği için kapatılacak.\n" : "") +
+                     (options.Profile == OptimizationProfile.Ultra
+                         ? "• Ultra: koruma listesi dışındaki başlangıç uygulamaları ve ek servisler kapatılır (hepsi geri alınabilir).\n" +
+                           (options.DisableBluetooth ? "• Bluetooth servisleri KAPATILACAK (Bluetooth cihazlar çalışmaz).\n" : "") +
+                           "• Sonuçları ölçmek için yeniden başlatıp 2-3 dakika bekleyin.\n"
+                         : "") +
                      "\nDevam edilsin mi?";
         if (MessageBox.Show(msg, "FiveMHater Optimizer", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
 
@@ -298,6 +316,7 @@ public sealed class MainViewModel : ObservableObject
             if (p.Percent > Progress) Progress = Math.Min(100, p.Percent);
         });
 
+        bool promptUltraReboot = false;
         try
         {
             _system ??= await Task.Run(HardwareDetector.Detect);
@@ -307,6 +326,11 @@ public sealed class MainViewModel : ObservableObject
             Subtitle = ctx.RebootRecommended ? "Tüm ayarların etkinleşmesi için yeniden başlatma önerilir" : "Doğrulama ve sonuç";
             FillBadges(ctx);
             RebootRecommended = ctx.RebootRecommended;
+            if (options.Profile == OptimizationProfile.Ultra)
+            {
+                log.Info("Ultra tamamlandı: değişikliklerin tamamı yeniden başlatma sonrası etkinleşir. İşlem sayısını açılıştan 2-3 dk sonra ölçün.");
+                promptUltraReboot = true;
+            }
         }
         catch (OperationCanceledException)
         {
@@ -325,6 +349,17 @@ public sealed class MainViewModel : ObservableObject
             IsCompleted = true;
             RefreshBackupState();
             log.Dispose();
+        }
+
+        if (promptUltraReboot)
+        {
+            await Task.Delay(400); // önce sonuç ekranı çizilsin
+            if (MessageBox.Show("Ultra / Full+Full uygulandı.\n\nBaşlangıç uygulamaları, servisler ve svchost birleştirme ancak yeniden başlatma sonrası tam etkinleşir. " +
+                                "En doğru işlem sayısı için açılıştan 2-3 dakika sonra kontrol edin.\n\nŞimdi yeniden başlatılsın mı? (10 saniye sonra; açık çalışmalarınızı kaydedin)",
+                    "Yeniden Başlat", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                ProcessRunner.Run("shutdown.exe", "/r /t 10 /c \"FiveMHater Optimizer Ultra: ayarların etkinleşmesi için yeniden başlatılıyor\"", null, 15_000);
+            }
         }
     }
 

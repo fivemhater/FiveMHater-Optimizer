@@ -1,4 +1,4 @@
-# FiveMHater Optimizer v2.0 — Derleme, İkon ve Dijital İmzalama Rehberi
+# FiveMHater Optimizer v2.1 — Derleme, İkon ve Dijital İmzalama Rehberi
 
 Teknoloji: **C# .NET 8 · WPF · tek dosya win-x64 .exe** (packer / obfuscator / UPX / sıkıştırma **YOK**).
 Yönetici yetkisi `app.manifest` içindeki `requireAdministrator` ile istenir.
@@ -17,7 +17,7 @@ FiveMHaterOptimizer-source/
 │   ├── publish.ps1             # Windows'ta tek dosya derleme
 │   └── publish.sh              # Linux/macOS'ta çapraz derleme
 └── FiveMHaterOptimizer/
-    ├── FiveMHaterOptimizer.csproj   # AssemblyInfo: Product/Company/Copyright/Version 2.0.0.0/ApplicationIcon
+    ├── FiveMHaterOptimizer.csproj   # AssemblyInfo: Product/Company/Copyright/Version 2.1.0.0/ApplicationIcon
     ├── app.manifest                 # requireAdministrator, Win10/11 GUID, PerMonitorV2 DPI, longPathAware
     ├── App.xaml / App.xaml.cs       # Tema, stiller, global hata yakalama
     ├── Assets/
@@ -27,7 +27,7 @@ FiveMHaterOptimizer-source/
     ├── Models/
     │   ├── BackupModels.cs          # backup.json şeması
     │   ├── BenchmarkResult.cs
-    │   ├── OptimizationOptions.cs   # Extreme / Balanced / Sadece Ağ & Ping + anahtarlar
+    │   ├── OptimizationOptions.cs   # Ultra / Extreme / Balanced / Sadece Ağ & Ping + anahtarlar
     │   └── SystemInfo.cs
     ├── Services/
     │   ├── AppPaths.cs  Logger.cs  NativeMethods.cs  PrivilegeHelper.cs  ProcessRunner.cs
@@ -39,6 +39,7 @@ FiveMHaterOptimizer-source/
     │       ├── IOptimizationModule.cs
     │       ├── SystemPrepModule.cs       # Modül 1  Sistem hazırlığı + yedek + geri yükleme noktası
     │       ├── ServiceProcessModule.cs   # Modül 2  Servis & işlem azaltma
+    │       ├── UltraDebloatModule.cs     # Modül 2b Ultra: başlangıç uygulamaları + derin servis/görev azaltma
     │       ├── NetworkModule.cs          # Modül 3  Ağ ayarları (TCP/netsh/NIC/QoS)
     │       ├── DnsModule.cs              # Modül 3  DNS seçimi
     │       ├── PowerCpuModule.cs         # Modül 4  Güç planı & CPU
@@ -219,3 +220,20 @@ Defender veya SmartScreen exe'yi yanlışlıkla işaretlerse:
 - Başlangıçta web sitesi/Discord açma, reklam, başlangıca ekleme **yok**.
 - Sistem dosyası silinmez; TrustedInstaller izinleri kırılmaz; pagefile kapatılmaz; DC (pil) güç değerlerine dokunulmaz.
 - Çalıştırılan araçlar yalnızca System32'deki resmi araçlardır: `powercfg.exe`, `netsh.exe`, `fsutil.exe`, `ipconfig.exe`, `bcdedit.exe`, `schtasks.exe`, `gpupdate.exe` (QoS ilkesi yenileme), `shutdown.exe` (yalnızca kullanıcı “Yeniden Başlat”a basıp onaylarsa). Hepsi `CreateNoWindow = true`, açık argümanlarla çalışır ve çıktıları loga yazılır.
+
+## v2.1 — Ultra / Full+Full profili
+
+- Yeni 4. profil **Ultra / Full+Full** (önerilen). Extreme'in tamamını + aşağıdakileri uygular:
+  - Başlangıç uygulamaları (HKCU/HKLM Run, Run32, Başlangıç klasörleri, paketli uygulama başlangıç görevleri) koruma listesi dışındaysa
+    `Explorer\StartupApproved` ile kapatılır (Görev Yöneticisi > Başlangıç ile aynı yöntem; dosya/kayıt silinmez). RunOnce yalnızca loglanır.
+  - Üçüncü taraf güncelleyici görevleri (Edge/Google/Adobe/CCleaner/Opera/Brave/Dropbox/NVIDIA telemetri) kapatılır.
+  - Ek servisler El ile/Devre dışı (CDPSvc, OneSyncSvc, MessagingService, PimIndexMaintenanceSvc, BcastDVRUserService, Xbox servisleri,
+    WMPNetworkSvc, icssvc, SSDP/UPnP, akıllı kart, TapiSrv, PcaSvc, TrkWks, DPS, güncelleyici servisleri, VM değilse vmic*,
+    hipervizör yoksa HvHost, biyometrik cihaz yoksa WbioSrvc, seçilirse Bluetooth).
+  - Ek zamanlanmış görevler (Office telemetri, Siuf, Haritalar, WER kuyruğu, Autochk, DiskFootprint, Bellek tanılama, Güç tanılama, Xbl).
+  - Widgets/Copilot/Teams Sohbet/Arama vurguları/Cortana/Phone Link arka planı/Edge ön yükleme/Teslim Optimizasyonu P2P kapatılır.
+- Asla dokunulmaz: WpnService (bildirimler), TabletInputService/TextInputManagementService, UnistoreSvc, UserDataSvc, AppXSvc,
+  StateRepository, DoSvc, InstallService, wlidsvc, ses/ağ/GPU/Defender/Windows Update servisleri, ScheduledDefrag (TRIM).
+- Ultra anahtarları: "Discord/Steam başlangıçta açılsın", "OneDrive başlangıçta açılmasın", "Bluetooth kullanmıyorum".
+- Donanıma/CPU modeline özel ayar yoktur. Tüm değişiklikler `backup.json`'a yazılır ve **Tam Geri Al** ile geri alınır.
+- İşlem sayısını yeniden başlattıktan 2-3 dakika sonra ölçün.

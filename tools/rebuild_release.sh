@@ -16,5 +16,6 @@ cp DERLEME_VE_IMZALAMA.md "$REL/"
 rm -rf /tmp/zipstage && mkdir -p /tmp/zipstage && cp -r "$SRC" /tmp/zipstage/FiveMHaterOptimizer-source
 rm -rf /tmp/zipstage/FiveMHaterOptimizer-source/FiveMHaterOptimizer/{bin,obj}
 rm -f "$REL/FiveMHaterOptimizer-source.zip"
-(cd /tmp/zipstage && zip -qr "$REL/FiveMHaterOptimizer-source.zip" FiveMHaterOptimizer-source)
+if command -v zip >/dev/null; then (cd /tmp/zipstage && zip -qr "$REL/FiveMHaterOptimizer-source.zip" FiveMHaterOptimizer-source)
+else python3 -c "import shutil,sys; shutil.make_archive(sys.argv[1],'zip','/tmp/zipstage','FiveMHaterOptimizer-source')" "$REL/FiveMHaterOptimizer-source"; fi
 file "$REL/FiveMHaterOptimizer.exe"; ls -la "$REL"
