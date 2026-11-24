@@ -1,0 +1,26 @@
+<UserControl x:Class="FiveMHaterOptimizer.Views.LogoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="64" Width="64">
+    <Grid>
+        <Image x:Name="LogoImage" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" Visibility="Collapsed" />
+
+        <!-- Yedek vektörel logo: PNG bulunamazsa uygulama çökmez -->
+        <Viewbox x:Name="FallbackLogo" Stretch="Uniform" Visibility="Visible">
+            <Canvas Width="160" Height="100">
+                <Path Data="M 8,10 H 70 V 26 H 26 V 44 H 62 V 60 H 26 V 90 H 8 Z  M 82,10 H 100 V 42 H 134 V 10 H 152 V 90 H 134 V 58 H 100 V 90 H 82 Z">
+                    <Path.Fill>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#FFFFFF" Offset="0" />
+                            <GradientStop Color="#C9CACF" Offset="0.55" />
+                            <GradientStop Color="#8E9096" Offset="1" />
+                        </LinearGradientBrush>
+                    </Path.Fill>
+                    <Path.Effect>
+                        <DropShadowEffect Color="#E11D2E" BlurRadius="22" ShadowDepth="0" Opacity="0.9" />
+                    </Path.Effect>
+                </Path>
+            </Canvas>
+        </Viewbox>
+    </Grid>
+</UserControl>

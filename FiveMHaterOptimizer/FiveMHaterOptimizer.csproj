@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>FiveMHaterOptimizer</RootNamespace>
+    <AssemblyName>FiveMHaterOptimizer</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\fivemhater.ico</ApplicationIcon>
+    <StartupObject>FiveMHaterOptimizer.App</StartupObject>
+
+    <!-- AssemblyInfo meta verisi -->
+    <Product>FiveMHater Optimizer</Product>
+    <AssemblyTitle>FiveMHater Optimizer</AssemblyTitle>
+    <Description>FiveM / GTA V ve Windows 10/11 için şeffaf, tamamen geri alınabilir performans optimizasyon aracı.</Description>
+    <Company>FiveMHater</Company>
+    <Authors>FiveMHater</Authors>
+    <Copyright>Copyright © 2026 FiveMHater. Tüm hakları saklıdır.</Copyright>
+    <Version>2.0.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <InformationalVersion>2.0.0</InformationalVersion>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <NeutralLanguage>tr-TR</NeutralLanguage>
+    <SatelliteResourceLanguages>tr;en</SatelliteResourceLanguages>
+
+    <!-- Tek dosya, packer/obfuscator YOK, sıkıştırma YOK -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PlatformTarget>x64</PlatformTarget>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <Deterministic>true</Deterministic>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\fivemhater_logo.png" />
+    <Resource Include="Assets\fivemhater.ico" />
+  </ItemGroup>
+
+</Project>
