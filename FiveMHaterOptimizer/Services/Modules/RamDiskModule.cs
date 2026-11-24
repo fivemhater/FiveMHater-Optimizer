@@ -124,7 +124,8 @@ public sealed class RamDiskModule : IOptimizationModule
             ("AMD DxCache", Path.Combine(local, "AMD", "DxCache"), null, null),
             ("AMD DxcCache", Path.Combine(local, "AMD", "DxcCache"), null, null),
             ("AMD GLCache", Path.Combine(local, "AMD", "GLCache"), null, null),
-            ("AMD VkCache", Path.Combine(local, "AMD", "VkCache"), null, null)
+            ("AMD VkCache", Path.Combine(local, "AMD", "VkCache"), null, null),
+            ("Internet önbelleği (INetCache)", Path.Combine(local, "Microsoft", "Windows", "INetCache"), null, null)
         };
 
         double total = 0;
@@ -145,5 +146,21 @@ public sealed class RamDiskModule : IOptimizationModule
         }
         ctx.CleanedMB += total;
         log.Ok($"Disk temizliği: {total:0.0} MB kazanıldı. (Gölgelendirici önbellekleri ilk oyun açılışında yeniden oluşur.)");
+
+        // ---- SSD TRIM (yalnızca Ultra) ----
+        if (ctx.IsUltra)
+        {
+            string sysDrive = (Environment.GetEnvironmentVariable("SystemDrive") ?? "C:").TrimEnd('\\');
+            bool? ssd = HardwareDetector.SystemDiskIsSsdByMediaType();
+            if (ssd == true)
+            {
+                log.Info($"SSD TRIM (retrim) çalıştırılıyor: defrag.exe {sysDrive} /L");
+                var tr = ProcessRunner.Run("defrag.exe", $"{sysDrive} /L", log, 600_000);
+                if (tr.Success) log.Ok("SSD TRIM tamamlandı.");
+                else log.Warn($"SSD TRIM tamamlanamadı (çıkış kodu {tr.ExitCode}).");
+            }
+            else if (ssd == false) log.Detail("Sistem diski SSD değil (MediaType ≠ 4): TRIM atlandı.");
+            else log.Detail("Sistem diski türü belirlenemedi (MSFT_PhysicalDisk): TRIM atlandı.");
+        }
     }
 }

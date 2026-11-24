@@ -23,6 +23,9 @@ public sealed class OptimizationOptions
     /// <summary>OneDrive oturum açılışında otomatik başlamasın.</summary>
     public bool DisableOneDriveStartup { get; set; } = true;
 
+    /// <summary>Opsiyonel, varsayılan KAPALI: hazır gelen gereksiz uygulamaları kaldır (geri alınamaz).</summary>
+    public bool RemoveBloatware { get; set; }
+
     public string ProfileDisplayName => Profile switch
     {
         OptimizationProfile.Ultra => "Ultra / Full+Full",

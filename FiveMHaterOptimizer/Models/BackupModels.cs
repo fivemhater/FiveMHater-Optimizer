@@ -34,6 +34,32 @@ public sealed class BackupData
     public Dictionary<string, BcdBackupEntry> Bcd { get; set; } = new();
     public Dictionary<string, FileBackupEntry> Files { get; set; } = new();
     public List<string> Notes { get; set; } = new();
+
+    /// <summary>v2.2: güç planı AC ayarlarının orijinal değerleri. Anahtar: "şema|alt grup|ayar".</summary>
+    public Dictionary<string, PowerSettingBackupEntry> PowerSettings { get; set; } = new();
+
+    /// <summary>v2.2: powercfg /hibernate off öncesi hazırda bekletme durumu (null = dokunulmadı).</summary>
+    public bool? HibernateWasEnabled { get; set; }
+
+    /// <summary>v2.2: kaldırılan hazır uygulamalar (geri alınamaz; Microsoft Store'dan yeniden yüklenebilir).</summary>
+    public List<RemovedAppxEntry> RemovedAppx { get; set; } = new();
+}
+
+public sealed class PowerSettingBackupEntry
+{
+    public string Scheme { get; set; } = string.Empty;
+    public string SubGroup { get; set; } = string.Empty;
+    public string Setting { get; set; } = string.Empty;
+    public string Label { get; set; } = string.Empty;
+    public long? OriginalAc { get; set; }
+}
+
+public sealed class RemovedAppxEntry
+{
+    public string Name { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public DateTime RemovedUtc { get; set; }
+    public string Note { get; set; } = "Geri alınamaz; Microsoft Store'dan yeniden yüklenebilir.";
 }
 
 public sealed class RegistryBackupEntry

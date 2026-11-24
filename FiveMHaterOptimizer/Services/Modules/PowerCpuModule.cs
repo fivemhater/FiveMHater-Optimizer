@@ -92,6 +92,26 @@ public sealed class PowerCpuModule : IOptimizationModule
                 }
             }
 
+            if (ctx.IsExtreme)
+            {
+                foreach (var (sub, setting, label) in new[]
+                         {
+                             (PowerService.SubSleep, PowerService.StandbyIdle, "Uyku (AC) = Hiçbir zaman (STANDBYIDLE 0)"),
+                             (PowerService.SubDisk, PowerService.DiskIdle, "Diski kapat (AC) = Hiçbir zaman (DISKIDLE 0)")
+                         })
+                {
+                    long? orig = PowerService.QueryAc(scheme, sub, setting);
+                    ctx.Backup.RecordPowerSetting(new PowerSettingBackupEntry { Scheme = scheme, SubGroup = sub, Setting = setting, Label = label, OriginalAc = orig });
+                    if (PowerService.SetAc(scheme, sub, setting, 0, log))
+                    {
+                        log.Ok($"{label} (önceki AC değeri: {(orig?.ToString() ?? "okunamadı")} sn, yedeklendi; DC/pil değerine dokunulmadı)");
+                        string sch = scheme, sb = sub, st = setting;
+                        ctx.Verify.Add($"power:{setting}", $"Güç: {label}", () => PowerService.QueryAc(sch, sb, st) == 0);
+                    }
+                    else log.Warn($"{label} uygulanamadı.");
+                }
+            }
+
             var r = ProcessRunner.Run("powercfg.exe", $"/setactive {scheme}", log, 30_000);
             if (r.Success)
             {
@@ -103,6 +123,34 @@ public sealed class PowerCpuModule : IOptimizationModule
         else
         {
             log.Warn("Güç planı oluşturulamadı; mevcut plan korunuyor.");
+        }
+        // ---- Hazırda bekletme (Extreme + Ultra, yalnızca masaüstü) ----
+        if (ctx.IsExtreme)
+        {
+            if (s.IsLaptop)
+            {
+                log.Detail("Hazırda bekletme korunuyor: dizüstü/bataryalı sistemde kritik pil eylemi hazırda bekletmeye bağlıdır (veri kaybını önlemek için).");
+            }
+            else
+            {
+                bool? hib = PowerService.HibernateEnabled();
+                if (hib == null)
+                {
+                    log.Detail("HibernateEnabled okunamadı; hazırda bekletmeye dokunulmadı.");
+                }
+                else
+                {
+                    ctx.Backup.RecordHibernate(hib.Value);
+                    if (hib.Value)
+                    {
+                        var hr = ProcessRunner.Run("powercfg.exe", "/hibernate off", log, 30_000);
+                        if (hr.Success) log.Ok("Hazırda bekletme kapatıldı (hiberfil.sys silinir, Hızlı Başlatma da kapanır; Geri Al → /hibernate on).");
+                        else log.Warn("Hazırda bekletme kapatılamadı.");
+                    }
+                    else log.Detail("Hazırda bekletme zaten kapalı.");
+                    ctx.Verify.Add("power:hibernate", "Hazırda bekletme kapalı", () => PowerService.HibernateEnabled() == false);
+                }
+            }
         }
         ctx.SubProgress?.Invoke(0.35);
 

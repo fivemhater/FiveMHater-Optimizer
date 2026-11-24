@@ -187,6 +187,8 @@ public sealed class MainViewModel : ObservableObject
     public bool DisableBluetooth { get => _disableBluetooth; set => SetField(ref _disableBluetooth, value); }
     private bool _disableOneDrive = true;
     public bool DisableOneDriveStartup { get => _disableOneDrive; set => SetField(ref _disableOneDrive, value); }
+    private bool _removeBloatware;
+    public bool RemoveBloatware { get => _removeBloatware; set => SetField(ref _removeBloatware, value); }
 
     // ---------- Live screen ----------
     private string _title = "Optimizasyon uygulanıyor";
@@ -292,13 +294,15 @@ public sealed class MainViewModel : ObservableObject
             DisablePrinterServices = TogglesEnabled && DisablePrinter,
             KeepDiscordSteamStartup = KeepDiscordSteamStartup,
             DisableBluetooth = IsUltra && DisableBluetooth,
-            DisableOneDriveStartup = IsUltra && DisableOneDriveStartup
+            DisableOneDriveStartup = IsUltra && DisableOneDriveStartup,
+            RemoveBloatware = TogglesEnabled && RemoveBloatware
         };
 
         string msg = $"\"{options.ProfileDisplayName}\" profili uygulanacak.\n\n" +
                      "• Önce Sistem Geri Yükleme Noktası ve tam JSON yedeği alınır.\n" +
                      "• Tüm değişiklikler \"Tam Geri Al (Restore)\" ile geri alınabilir.\n" +
                      (options.ClearFiveMCache ? "• FiveM açıksa önbellek temizliği için kapatılacak.\n" : "") +
+                     (options.RemoveBloatware ? "• DİKKAT: Hazır gelen gereksiz uygulamalar kaldırılacak. Bu adım GERİ ALINAMAZ (Microsoft Store'dan yeniden yüklenebilir).\n" : "") +
                      (options.Profile == OptimizationProfile.Ultra
                          ? "• Ultra: koruma listesi dışındaki başlangıç uygulamaları ve ek servisler kapatılır (hepsi geri alınabilir).\n" +
                            (options.DisableBluetooth ? "• Bluetooth servisleri KAPATILACAK (Bluetooth cihazlar çalışmaz).\n" : "") +

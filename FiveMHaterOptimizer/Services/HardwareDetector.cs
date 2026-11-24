@@ -280,6 +280,31 @@ public static class HardwareDetector
         }
     }
 
+    /// <summary>Sistem diski MSFT_PhysicalDisk.MediaType ile: 4 = SSD → true, 3 = HDD → false, bilinmiyor → null.</summary>
+    public static bool? SystemDiskIsSsdByMediaType()
+    {
+        try
+        {
+            char sysLetter = char.ToUpperInvariant((Environment.GetEnvironmentVariable("SystemDrive") ?? "C:")[0]);
+            const string storage = @"root\Microsoft\Windows\Storage";
+            long diskNumber = -1;
+            foreach (var p in WmiUtil.Query(storage, "SELECT DiskNumber, DriveLetter FROM MSFT_Partition", "DiskNumber", "DriveLetter"))
+            {
+                if (!p.TryGetValue("DriveLetter", out object? dl) || dl == null) continue;
+                char letter;
+                try { letter = char.ToUpperInvariant(Convert.ToChar(dl)); } catch { continue; }
+                if (letter == sysLetter) { diskNumber = WmiUtil.Num(p, "DiskNumber"); break; }
+            }
+            if (diskNumber < 0) return null;
+            var disk = WmiUtil.Query(storage, "SELECT DeviceId, MediaType FROM MSFT_PhysicalDisk", "DeviceId", "MediaType")
+                .FirstOrDefault(d => WmiUtil.Str(d, "DeviceId") == diskNumber.ToString());
+            if (disk == null) return null;
+            long media = WmiUtil.Num(disk, "MediaType");
+            return media == 4 ? true : media == 3 ? false : null;
+        }
+        catch { return null; }
+    }
+
     public static bool LooksVirtual(string description, string name) =>
         VirtualMarkers.Any(m => description.Contains(m, StringComparison.OrdinalIgnoreCase) || name.Contains(m, StringComparison.OrdinalIgnoreCase));
 

@@ -95,7 +95,17 @@ public sealed class UltraDebloatModule : IOptimizationModule
         @"\Microsoft\Windows\Windows Media Sharing\UpdateLibrary",
         @"\Microsoft\Windows\Flighting\FeatureConfig\UsageDataReporting",
         @"\Microsoft\Windows\NetTrace\GatherNetworkInfo",
-        @"\Microsoft\Windows\Maintenance\WinSAT"
+        @"\Microsoft\Windows\Maintenance\WinSAT",
+        // v2.2 (kullanıcı onaylı ek liste)
+        @"\Microsoft\Windows\Registry\RegIdleBackup",
+        @"\Microsoft\Windows\RemoteAssistance\RemoteAssistanceTask",
+        @"\Microsoft\Windows\Ras\MobilityManager",
+        @"\Microsoft\Windows\Mobile Broadband Accounts\MNO Metadata Parser",
+        @"\Microsoft\Windows\UPnP\UPnPHostConfig",
+        @"\Microsoft\Windows\WDI\ResolutionHost",
+        @"\Microsoft\Windows\Wininet\CacheTask",
+        @"\Microsoft\Windows\SettingSync\BackgroundUploadTask",
+        @"\Microsoft\Windows\SettingSync\NetworkStateChangeTask"
     };
 
     private static readonly string[] UltraKill =
@@ -373,7 +383,16 @@ public sealed class UltraDebloatModule : IOptimizationModule
             ("AdobeARMservice", ServiceStart.Manual, "Adobe Acrobat güncelleyici"),
             ("MozillaMaintenance", ServiceStart.Manual, "Mozilla bakım servisi"),
             ("brave", ServiceStart.Manual, "Brave güncelleyici"),
-            ("bravem", ServiceStart.Manual, "Brave güncelleyici")
+            ("bravem", ServiceStart.Manual, "Brave güncelleyici"),
+            // v2.2 (kullanıcı onaylı ek liste)
+            ("TermService", ServiceStart.Disabled, "Uzak Masaüstü Hizmetleri (bu PC'ye RDP ile bağlanılamaz)"),
+            ("SessionEnv", ServiceStart.Disabled, "Uzak Masaüstü yapılandırma"),
+            ("UmRdpService", ServiceStart.Disabled, "Uzak Masaüstü UserMode bağlantı yönlendirici"),
+            ("RemoteAccess", ServiceStart.Disabled, "Yönlendirme ve Uzaktan Erişim"),
+            ("NcbService", ServiceStart.Disabled, "Ağ Bağlantısı Aracısı"),
+            ("SCPolicySvc", ServiceStart.Disabled, "Akıllı kart çıkarma ilkesi"),
+            ("AssignedAccessManagerSvc", ServiceStart.Disabled, "Atanmış Erişim (kiosk modu)"),
+            ("NaturalAuthentication", ServiceStart.Disabled, "Doğal Kimlik Doğrulama (Dinamik Kilit)")
         };
 
         // Yeni Google Updater servisleri sürüm numaralı adlar taşır (GoogleUpdaterService128.0... vb.).

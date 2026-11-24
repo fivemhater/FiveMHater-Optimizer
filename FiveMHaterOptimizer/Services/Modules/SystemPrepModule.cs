@@ -22,7 +22,7 @@ public sealed class SystemPrepModule : IOptimizationModule
     public async Task RunAsync(OptimizationContext ctx, CancellationToken ct)
     {
         var log = ctx.Log;
-        log.Info($"FiveMHater Optimizer v2.1.0 — Profil: {ctx.Options.ProfileDisplayName}");
+        log.Info($"FiveMHater Optimizer v2.2.0 — Profil: {ctx.Options.ProfileDisplayName}");
         log.Info($"Seçenekler: FiveM önbellek temizliği = {(ctx.Options.ClearFiveMCache ? "Açık" : "Kapalı")}, " +
                  $"FiveM Competitive FPS = {(ctx.Options.ApplyFiveMFpsPreset ? "Açık" : "Kapalı")}, " +
                  $"Yazıcı/Tarayıcı servisleri kapat = {(ctx.Options.DisablePrinterServices ? "Açık" : "Kapalı")}");

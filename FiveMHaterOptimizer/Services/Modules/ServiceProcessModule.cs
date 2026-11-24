@@ -107,6 +107,22 @@ public sealed class ServiceProcessModule : IOptimizationModule
             log.Detail("Balanced: UWP arka plan uygulamaları (bildirimler/posta) korunuyor.");
         }
 
+        // ---- Gizlilik (Extreme + Ultra, v2.2) ----
+        if (ctx.IsExtreme)
+        {
+            log.Info("Gizlilik ayarları (telemetri, reklam kimliği, etkinlik geçmişi, geri bildirim, Wi-Fi Sense):");
+            reg.SetDword(Hive.HKLM, @"SOFTWARE\Policies\Microsoft\Windows\DataCollection", "AllowTelemetry", 0);
+            log.Detail("AllowTelemetry=0: Home/Pro sürümlerinde Windows bunu en düşük desteklenen düzey (1 = Gerekli) olarak uygular.");
+            reg.SetDword(Hive.HKCU, @"Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo", "Enabled", 0);
+            reg.SetDword(Hive.HKCU, @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "Start_TrackProgs", 0);
+            reg.SetDword(Hive.HKLM, @"SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config", "AutoConnectAllowedOEM", 0);
+            reg.SetDword(Hive.HKCU, @"Software\Microsoft\Siuf\Rules", "NumberOfSIUFInPeriod", 0);
+            reg.SetDword(Hive.HKLM, @"SOFTWARE\Policies\Microsoft\Windows\System", "EnableActivityFeed", 0);
+            reg.SetDword(Hive.HKLM, @"SOFTWARE\Policies\Microsoft\Windows\System", "PublishUserActivities", 0);
+            reg.SetDword(Hive.HKLM, @"SOFTWARE\Policies\Microsoft\Windows\System", "UploadUserActivities", 0);
+            reg.SetString(Hive.HKCU, @"Control Panel\Desktop", "MenuShowDelay", "0");
+        }
+
         // ---- Microsoft Edge arka planı ----
         log.Info("Microsoft Edge arka plan süreçleri kapatılıyor:");
         reg.SetDword(Hive.HKLM, @"SOFTWARE\Policies\Microsoft\Edge", "StartupBoostEnabled", 0);

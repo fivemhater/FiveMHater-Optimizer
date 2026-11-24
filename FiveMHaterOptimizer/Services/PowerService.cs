@@ -24,6 +24,33 @@ public static class PowerService
     public const string SubPciExpress = "501a4d13-42af-4429-9fd1-a8218c268e20";
     public const string PciAspm = "ee12f906-d277-404b-b6da-e5fa1a576df5";
 
+    public const string SubSleep = "238c9fa8-0aad-41ed-83f4-97be242c8f20";
+    public const string StandbyIdle = "29f6c1db-86da-48c5-9fdb-f2b67b1f44da";
+    public const string SubDisk = "0012ee47-9041-4b5d-9b77-535fba8b1442";
+    public const string DiskIdle = "6738e2c4-e8a5-4a42-b16a-e040e769756e";
+
+    public const string PowerKey = @"SYSTEM\CurrentControlSet\Control\Power";
+
+    private static readonly Regex HexRegex = new(@"0x[0-9a-fA-F]{8}");
+
+    /// <summary>
+    /// powercfg /query çıktısından geçerli AC değerini okur (dil bağımsız: çıktıdaki son iki 0x........ değeri sırasıyla AC ve DC'dir).
+    /// </summary>
+    public static long? QueryAc(string scheme, string sub, string setting)
+    {
+        var r = ProcessRunner.Run("powercfg.exe", $"/query {scheme} {sub} {setting}", null, 30_000, false, false);
+        if (!r.Success) return null;
+        var m = HexRegex.Matches(r.Output);
+        if (m.Count < 2) return null;
+        return Convert.ToInt64(m[m.Count - 2].Value, 16);
+    }
+
+    public static bool? HibernateEnabled()
+    {
+        long? v = RegistryUtil.GetNumber(Hive.HKLM, PowerKey, "HibernateEnabled");
+        return v == null ? null : v != 0;
+    }
+
     private static readonly Regex GuidRegex = new(@"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}");
 
     public static string? GetActiveScheme(Logger? log = null)

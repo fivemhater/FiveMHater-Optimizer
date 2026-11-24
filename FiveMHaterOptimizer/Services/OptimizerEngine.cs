@@ -17,6 +17,7 @@ public sealed class OptimizerEngine
         new SystemPrepModule(),
         new ServiceProcessModule(),
         new UltraDebloatModule(),
+        new BloatwareModule(),
         new NetworkModule(),
         new DnsModule(),
         new PowerCpuModule(),

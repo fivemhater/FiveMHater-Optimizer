@@ -1,4 +1,4 @@
-# FiveMHater Optimizer v2.1 — Derleme, İkon ve Dijital İmzalama Rehberi
+# FiveMHater Optimizer v2.2 — Derleme, İkon ve Dijital İmzalama Rehberi
 
 Teknoloji: **C# .NET 8 · WPF · tek dosya win-x64 .exe** (packer / obfuscator / UPX / sıkıştırma **YOK**).
 Yönetici yetkisi `app.manifest` içindeki `requireAdministrator` ile istenir.
@@ -17,7 +17,7 @@ FiveMHaterOptimizer-source/
 │   ├── publish.ps1             # Windows'ta tek dosya derleme
 │   └── publish.sh              # Linux/macOS'ta çapraz derleme
 └── FiveMHaterOptimizer/
-    ├── FiveMHaterOptimizer.csproj   # AssemblyInfo: Product/Company/Copyright/Version 2.1.0.0/ApplicationIcon
+    ├── FiveMHaterOptimizer.csproj   # AssemblyInfo: Product/Company/Copyright/Version 2.2.0.0/ApplicationIcon
     ├── app.manifest                 # requireAdministrator, Win10/11 GUID, PerMonitorV2 DPI, longPathAware
     ├── App.xaml / App.xaml.cs       # Tema, stiller, global hata yakalama
     ├── Assets/
@@ -40,6 +40,7 @@ FiveMHaterOptimizer-source/
     │       ├── SystemPrepModule.cs       # Modül 1  Sistem hazırlığı + yedek + geri yükleme noktası
     │       ├── ServiceProcessModule.cs   # Modül 2  Servis & işlem azaltma
     │       ├── UltraDebloatModule.cs     # Modül 2b Ultra: başlangıç uygulamaları + derin servis/görev azaltma
+    │       ├── BloatwareModule.cs        # Modül 2c Opsiyonel: hazır uygulamaları kaldırma (WinRT PackageManager, geri alınamaz)
     │       ├── NetworkModule.cs          # Modül 3  Ağ ayarları (TCP/netsh/NIC/QoS)
     │       ├── DnsModule.cs              # Modül 3  DNS seçimi
     │       ├── PowerCpuModule.cs         # Modül 4  Güç planı & CPU
@@ -237,3 +238,21 @@ Defender veya SmartScreen exe'yi yanlışlıkla işaretlerse:
 - Ultra anahtarları: "Discord/Steam başlangıçta açılsın", "OneDrive başlangıçta açılmasın", "Bluetooth kullanmıyorum".
 - Donanıma/CPU modeline özel ayar yoktur. Tüm değişiklikler `backup.json`'a yazılır ve **Tam Geri Al** ile geri alınır.
 - İşlem sayısını yeniden başlattıktan 2-3 dakika sonra ölçün.
+
+## v2.2 — Güvenle eklenebilen eksikler
+
+- **Hedef çerçeve:** `net8.0-windows10.0.19041.0` (WinRT `PackageManager` API için; minimum Windows 10 1809). PowerShell kullanılmaz.
+- **Ultra servisleri → Devre dışı:** TermService, SessionEnv, UmRdpService (Uzak Masaüstü), RemoteAccess, NcbService, SCPolicySvc,
+  AssignedAccessManagerSvc, NaturalAuthentication. Sistemde olmayanlar atlanır; başlangıç tipleri yedeklenir.
+- **Ultra görevleri:** RegIdleBackup, RemoteAssistanceTask, Ras\MobilityManager, MNO Metadata Parser, UPnPHostConfig,
+  WDI\ResolutionHost, Wininet\CacheTask, SettingSync\BackgroundUploadTask, SettingSync\NetworkStateChangeTask.
+- **Gizlilik (Extreme + Ultra):** AllowTelemetry=0 (Home/Pro'da fiilen 1), reklam kimliği kapalı, Start_TrackProgs=0, Wi-Fi Sense
+  (AutoConnectAllowedOEM=0), geri bildirim sıklığı 0, Etkinlik Geçmişi ilkeleri 0, MenuShowDelay="0".
+- **Güç (Extreme + Ultra):** FiveMHater planında AC Uyku (STANDBYIDLE) ve AC Disk kapatma (DISKIDLE) = 0; orijinal AC değerleri
+  `PowerSettings` altında yedeklenir. Masaüstünde `powercfg /hibernate off` (önceki `HibernateEnabled` yedeklenir; Geri Al açıksa
+  `/hibernate on` çalıştırır). Dizüstünde hazırda bekletmeye ve DC değerlerine dokunulmaz.
+- **Temizlik:** `%LOCALAPPDATA%\Microsoft\Windows\INetCache` (kilitli dosyalar atlanır). Ultra'da sistem diski
+  `MSFT_PhysicalDisk.MediaType = 4` (SSD) ise `defrag.exe C: /L` (resmi retrim); bilinmiyorsa atlanır.
+- **Opsiyonel (varsayılan KAPALI):** "Hazır gelen gereksiz uygulamaları kaldır (geri alınamaz)". Yalnızca mevcut kullanıcı; provisioned
+  paketlere dokunulmaz; Xbox/Store/Kamera/Hesap Makinesi/Fotoğraflar vb. korunur. Kaldırılanlar `RemovedAppx` altında listelenir,
+  Tam Geri Al yalnızca bunları loglar (Microsoft Store'dan yeniden yüklenebilir).

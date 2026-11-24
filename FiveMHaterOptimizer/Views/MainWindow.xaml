@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="clr-namespace:FiveMHaterOptimizer.Views"
         Title="FiveMHater Optimizer"
-        Width="960" Height="700"
+        Width="960" Height="730"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen"
         FontFamily="{StaticResource UiFont}" Foreground="{StaticResource TextBrush}"
@@ -27,7 +27,7 @@
                         </Ellipse.Effect>
                     </Ellipse>
                     <TextBlock Text="FiveMHater Optimizer" Margin="9,0,0,0" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MutedBrush}" />
-                    <TextBlock Text="v2.1" Margin="6,0,0,0" FontSize="12" Foreground="{StaticResource DimBrush}" />
+                    <TextBlock Text="v2.2" Margin="6,0,0,0" FontSize="12" Foreground="{StaticResource DimBrush}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
                     <Button Style="{StaticResource TitleBarButton}" Click="Minimize_Click" ToolTip="Küçült">
@@ -147,6 +147,11 @@
                         <CheckBox Style="{StaticResource SwitchToggle}" IsChecked="{Binding KeepDiscordSteamStartup, Mode=TwoWay}" Content="Discord/Steam başlangıçta açılsın" />
                         <CheckBox Style="{StaticResource SwitchToggle}" IsChecked="{Binding DisableOneDriveStartup, Mode=TwoWay}" Content="OneDrive başlangıçta açılmasın" />
                         <CheckBox Style="{StaticResource SwitchToggle}" IsChecked="{Binding DisableBluetooth, Mode=TwoWay}" Content="Bluetooth kullanmıyorum (kapat)" />
+                    </UniformGrid>
+                    <UniformGrid Columns="1" Margin="-5,8,-5,0" IsEnabled="{Binding TogglesEnabled}">
+                        <CheckBox Style="{StaticResource SwitchToggle}" IsChecked="{Binding RemoveBloatware, Mode=TwoWay}"
+                                  Content="Hazır gelen gereksiz uygulamaları kaldır (geri alınamaz)"
+                                  ToolTip="Yalnızca mevcut kullanıcı için: Bing Haber/Hava, Solitaire, Candy Crush, TikTok, Spotify, Teams (kişisel), Clipchamp vb. Xbox, Store, Kamera, Hesap Makinesi, Fotoğraflar korunur. Microsoft Store'dan yeniden yüklenebilir." />
                     </UniformGrid>
                 </StackPanel>
 

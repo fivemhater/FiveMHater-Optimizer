@@ -77,7 +77,7 @@ public sealed class BackupService
             MachineName = Environment.MachineName,
             UserName = Environment.UserName,
             OsVersion = Environment.OSVersion.VersionString,
-            AppVersion = "2.1.0.0"
+            AppVersion = "2.2.0.0"
         };
         var svc = new BackupService(data, true);
         svc.Save();
@@ -280,6 +280,37 @@ public sealed class BackupService
             string id = e.OriginalPath.ToLowerInvariant();
             if (Data.Files.ContainsKey(id)) return;
             Data.Files[id] = e;
+        }
+        Save();
+    }
+
+    public void RecordPowerSetting(PowerSettingBackupEntry e)
+    {
+        lock (_lock)
+        {
+            string id = $"{e.Scheme}|{e.SubGroup}|{e.Setting}".ToLowerInvariant();
+            if (Data.PowerSettings.ContainsKey(id)) return;
+            Data.PowerSettings[id] = e;
+        }
+        Save();
+    }
+
+    public void RecordHibernate(bool wasEnabled)
+    {
+        lock (_lock)
+        {
+            if (Data.HibernateWasEnabled != null) return;
+            Data.HibernateWasEnabled = wasEnabled;
+        }
+        Save();
+    }
+
+    public void RecordRemovedAppx(RemovedAppxEntry e)
+    {
+        lock (_lock)
+        {
+            if (Data.RemovedAppx.Exists(x => x.FullName.Equals(e.FullName, StringComparison.OrdinalIgnoreCase))) return;
+            Data.RemovedAppx.Add(e);
         }
         Save();
     }

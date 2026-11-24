@@ -124,6 +124,32 @@ public sealed class RestoreEngine
         // 4) Güç planı
         log.Section("Güç planı");
         progress.Report(new EngineProgress("Güç planı", 68));
+        foreach (var ps in data.PowerSettings.Values)
+        {
+            if (ps.OriginalAc == null || !PowerService.SchemeExists(ps.Scheme))
+            {
+                log.Detail($"{ps.Label}: plan kaldırılacak/yok veya orijinal değer bilinmiyor, atlandı.");
+                continue;
+            }
+            if (PowerService.SetAc(ps.Scheme, ps.SubGroup, ps.Setting, (int)ps.OriginalAc.Value, log))
+                log.Ok($"{ps.Label} → orijinal AC değeri {ps.OriginalAc} geri yüklendi.");
+            else { log.Warn($"{ps.Label} geri yüklenemedi."); result.Failures++; }
+        }
+        if (data.HibernateWasEnabled == true)
+        {
+            var hr = ProcessRunner.Run("powercfg.exe", "/hibernate on", log, 30_000);
+            if (hr.Success) log.Ok("Hazırda bekletme yeniden açıldı (powercfg /hibernate on).");
+            else { log.Warn("Hazırda bekletme yeniden açılamadı."); result.Failures++; }
+        }
+        else if (data.HibernateWasEnabled == false)
+        {
+            log.Detail("Hazırda bekletme optimizasyondan önce de kapalıydı; dokunulmadı.");
+        }
+        if (data.RemovedAppx.Count > 0)
+        {
+            log.Info($"Kaldırılan hazır uygulamalar geri alınamaz ({data.RemovedAppx.Count} adet). İsterseniz Microsoft Store'dan yeniden yükleyebilirsiniz:");
+            foreach (var a in data.RemovedAppx) log.Detail($"• {a.Name}");
+        }
         if (data.Power != null)
         {
             if (!string.IsNullOrEmpty(data.Power.OriginalActiveScheme))
